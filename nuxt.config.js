@@ -30,8 +30,17 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/axios"],
+  modules: ["@nuxtjs/axios", "nuxt-highcharts"],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+  // read envfile
+  // privateRuntimeConfig: {
+  //   apiKey:
+  //     process.env.NODE_ENV !== "production" ? process.env.APIKEY : undefined,
+  // },
+  publicRuntimeConfig: {
+    baseURL: process.env.BASEURL,
+    apiKey: process.env.APIKEY,
+  },
 };
