@@ -4,13 +4,25 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, reactive, watch } from "@nuxtjs/composition-api";
+<script lang="ts">
+import {
+  defineComponent,
+  PropOptions,
+  reactive,
+  watch,
+} from "@nuxtjs/composition-api";
+import { PrefData } from "@/model/prefData.js";
+import { chartOption } from "@/types/chartoption";
+
+type prefValue = {
+  value: number;
+  year: number;
+};
 
 export default defineComponent({
   name: "Chart",
   props: {
-    data: { type: Array, default: () => [] },
+    data: { type: Array } as PropOptions<PrefData[]>,
     population: { type: String, default: () => "" },
   },
   setup(props) {
@@ -19,7 +31,7 @@ export default defineComponent({
       () => getSeries()
     );
 
-    const getPopulationType = (data) => {
+    const getPopulationType = (data: PrefData) => {
       if (props.population === "総人口") return data.totalPopulation;
       if (props.population === "年少人口") return data.youngPopulation;
       if (props.population === "生産年齢人口") return data.workingAgePopulation;
@@ -27,16 +39,16 @@ export default defineComponent({
     };
 
     const getSeries = () => {
-      chartOptions.series = props.data.map((d) => {
+      chartOptions.series = props.data?.map((d) => {
         const population = getPopulationType(d);
-        const data = population[0].data.map((v) => v.value);
-        const year = population[0].data.map((v) => v.year);
+        const data = population[0].data.map((v: prefValue) => v.value);
+        const year = population[0].data.map((v: prefValue) => v.year);
         const name = d.prefName;
         return { name: name, data: data, x: year };
       });
     };
 
-    const chartOptions = reactive({
+    const chartOptions: chartOption = reactive({
       chart: {
         polar: false,
         // height: "500px",
@@ -63,11 +75,11 @@ export default defineComponent({
         title: {
           text: "年",
         },
-        labels: {
-          formatter: function () {
-            return this.value;
-          },
-        },
+        // labels: {
+        //   formatter: function () {
+        //     return this.value;
+        //   },
+        // },
         // tickInterval: 5,
         // accessibility: {
         //   rangeDescription: "Range: 2010 to 2017",

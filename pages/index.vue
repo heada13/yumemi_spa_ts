@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+// import Vue from "vue";
 // export default Vue.extend({})
 import {
   defineComponent,
@@ -61,6 +61,11 @@ type data = {
   population: PrefData[];
 };
 
+type headers = {
+  "Content-Type": string;
+  "X-API-KEY": string;
+};
+
 export default defineComponent({
   components: {
     Chart,
@@ -83,7 +88,7 @@ export default defineComponent({
     });
 
     const baseURL: string = $config.baseURL;
-    const headers = {
+    const headers: headers = {
       "Content-Type": "application/json",
       "X-API-KEY": $config.apiKey,
     };
@@ -91,10 +96,10 @@ export default defineComponent({
     const getCheckedPopulation = (): void => {
       const p = data.prefcode;
       let tmpdata: PrefData[] = [];
-      for (let i in p) {
-        getPopulation(p[i].prefCode)
+      for (let i of p) {
+        getPopulation(i.prefCode)
           .then((result) => {
-            tmpdata.push(new PrefData(p[i], result));
+            tmpdata.push(new PrefData(i, result));
           })
           .catch((err) => {
             console.log(err);
@@ -104,15 +109,14 @@ export default defineComponent({
     };
 
     const getPopulation = async (code: number) => {
-      const populationUrl = `${baseURL}api/v1/population/composition/perYear?cityCode=-&prefCode=${code}`;
-      console.log(populationUrl);
+      const populationUrl: string = `${baseURL}api/v1/population/composition/perYear?cityCode=-&prefCode=${code}`;
       const res = await $axios.$get(populationUrl, { headers: headers });
       console.log("res", res);
       return res;
     };
 
     const getPrefectures = async () => {
-      const prefecturesUrl = `${baseURL}api/v1/prefectures`;
+      const prefecturesUrl: string = `${baseURL}api/v1/prefectures`;
       const res = await $axios.$get(prefecturesUrl, { headers: headers });
       data.prefectures = res.result;
     };
